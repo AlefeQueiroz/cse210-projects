@@ -4,29 +4,41 @@ using System.Runtime.CompilerServices;
 class Program
 {
     static void Main(string[] args)
-    {   
+    {   string letter = "";
+        string sign = "";
         Console.WriteLine("Type your grade percentage: ");
         int grade = int.Parse(Console.ReadLine());
         if (grade >= 90 )
-        {   
-            Console.WriteLine("Your final grade is: A");
+        {   letter = "A";
+
         }
         else if (grade >= 80)
-        {
-            Console.WriteLine("Your final grade is: B");
+        {   letter = "B";
+    
         }
         else if (grade >= 70)
-        {
-            Console.WriteLine("Your final grade is: C");
+        {   letter = "C";
+
         }
         else if (grade >= 60)
-        {
-            Console.WriteLine("Your final grade is: D");
+        {   letter = "D";
+
         }
         else{
-            Console.WriteLine("Your final grade is: F");
+            letter = "F";
         }
-        
+        if (grade % 10 <= 3)
+        {
+            sign = "-";
+        }
+        else if (grade % 10 >= 7)
+        {
+            sign = "+";
+        }
+        if (grade <= 60 || grade >= 97){
+            sign = "";
+        }
+        Console.WriteLine($"Your Grade is: {letter} {sign}");
         if (grade >= 70)
         {
             Console.WriteLine("Congratulations!!!");
