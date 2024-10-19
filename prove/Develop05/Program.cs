@@ -4,6 +4,13 @@ class Program
 {
     static void Main(string[] args)
     {
-        Console.WriteLine("Hello Develop05 World!");
+        BreathingActivity breathingActivity = new BreathingActivity();
+        ListingActivity listingActivity = new ListingActivity();
+        ReflectingActivity reflectingActivity = new ReflectingActivity();
+
+        // Run the activities
+        breathingActivity.Run();
+        listingActivity.Run();
+        reflectingActivity.Run();
     }
 }
