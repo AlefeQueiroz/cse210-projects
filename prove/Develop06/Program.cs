@@ -1,71 +1,46 @@
+// Program.cs
 using System;
 
 class Program
 {
     static void Main(string[] args)
     {
-        GoalManager manager = new GoalManager();
-        bool exit = false;
+        GoalManager goalManager = new GoalManager();
+        bool running = true;
 
-        // Load goals from file (if any)
-        manager.LoadGoals();
-
-        while (!exit)
+        while (running)
         {
-            Console.WriteLine("\nWelcome to Eternal Quest!");
-            Console.WriteLine("1. Display Player Info");
-            Console.WriteLine("2. List All Goals");
-            Console.WriteLine("3. Create New Goal");
-            Console.WriteLine("4. Record Event (Mark Goal Progress)");
-            Console.WriteLine("5. Save Goals");
-            Console.WriteLine("6. Load Goals");
-            Console.WriteLine("7. Exit");
-            Console.Write("Choose an option: ");
-            
-            string input = Console.ReadLine();
-            switch (input)
+            Console.WriteLine("Eternal Quest - Choose an option:");
+            Console.WriteLine("1. Create a new goal");
+            Console.WriteLine("2. Record an event");
+            Console.WriteLine("3. Show goal details");
+            Console.WriteLine("4. Save goals");
+            Console.WriteLine("5. Load goals");
+            Console.WriteLine("6. Exit");
+
+            string choice = Console.ReadLine();
+            switch (choice)
             {
                 case "1":
-                    // Display player's current score and goal progress
-                    manager.DisplayPlayerInfo();
+                    goalManager.CreateGoal();
                     break;
-
                 case "2":
-                    // List all goals with their current completion status
-                    Console.WriteLine("\nGoal List:");
-                    manager.ListGoalDetails();
+                    goalManager.RecordEvent();
                     break;
-
                 case "3":
-                    // Create a new goal (Simple, Eternal, or Checklist)
-                    manager.CreateGoal();
+                    goalManager.ListGoalDetails();
                     break;
-
                 case "4":
-                    // Record an event for a goal (progress)
-                    manager.RecordEvent();
+                    goalManager.SaveGoals("goals.txt");
                     break;
-
                 case "5":
-                    // Save goals and progress to a file
-                    manager.SaveGoals();
-                    Console.WriteLine("Goals saved successfully!");
+                    goalManager.LoadGoals("goals.txt");
                     break;
-
                 case "6":
-                    // Load goals and progress from a file
-                    manager.LoadGoals();
-                    Console.WriteLine("Goals loaded successfully!");
+                    running = false;
                     break;
-
-                case "7":
-                    // Exit the program
-                    Console.WriteLine("Exiting the program. Goodbye!");
-                    exit = true;
-                    break;
-
                 default:
-                    Console.WriteLine("Invalid option. Please choose a valid number from the menu.");
+                    Console.WriteLine("Invalid choice.");
                     break;
             }
         }

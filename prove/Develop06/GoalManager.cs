@@ -1,119 +1,115 @@
+// GoalManager.cs
 using System;
 using System.Collections.Generic;
 using System.IO;
 
-public class GoalManager
+class GoalManager
 {
     private List<Goal> _goals = new List<Goal>();
     private int _score = 0;
 
-    public void Start()
-    {
-        // Initialize goals or menu logic here
-    }
-
-    public void DisplayPlayerInfo()
-    {
-        Console.WriteLine($"Current Score: {_score}");
-    }
-
-    public void ListGoalNames()
-    {
-        foreach (var goal in _goals)
-        {
-            Console.WriteLine(goal.GetDetailsString());
-        }
-    }
-
-    public void ListGoalDetails()
-    {
-        foreach (var goal in _goals)
-        {
-            Console.WriteLine(goal.GetDetailsString());
-        }
-    }
-
     public void CreateGoal()
     {
-        Console.WriteLine("Choose Goal Type: 1. Simple 2. Eternal 3. Checklist");
-        int choice = int.Parse(Console.ReadLine());
+        Console.WriteLine("Select the type of goal: (1) Simple, (2) Eternal, (3) Checklist");
+        string choice = Console.ReadLine();
 
-        Console.Write("Enter Goal Name: ");
+        Console.Write("Enter goal name: ");
         string name = Console.ReadLine();
-        Console.Write("Enter Goal Description: ");
+        Console.Write("Enter goal description: ");
         string description = Console.ReadLine();
-        Console.Write("Enter Goal Points: ");
+        Console.Write("Enter points: ");
         int points = int.Parse(Console.ReadLine());
 
         switch (choice)
         {
-            case 1:
+            case "1":
                 _goals.Add(new SimpleGoal(name, description, points));
                 break;
-            case 2:
+            case "2":
                 _goals.Add(new EternalGoal(name, description, points));
                 break;
-            case 3:
-                Console.Write("Enter Checklist Target: ");
+            case "3":
+                Console.Write("Enter target: ");
                 int target = int.Parse(Console.ReadLine());
-                Console.Write("Enter Bonus Points: ");
+                Console.Write("Enter bonus points: ");
                 int bonus = int.Parse(Console.ReadLine());
                 _goals.Add(new ChecklistGoal(name, description, points, target, bonus));
+                break;
+            default:
+                Console.WriteLine("Invalid selection.");
                 break;
         }
     }
 
     public void RecordEvent()
     {
-        Console.WriteLine("Enter goal index to record event: ");
+        ListGoalDetails();
+        Console.Write("Enter the goal number to record progress: ");
         int index = int.Parse(Console.ReadLine());
+
         if (index >= 0 && index < _goals.Count)
         {
-            _goals[index].RecordEvent();
-            if (_goals[index].IsComplete())
+            Goal goal = _goals[index];
+            goal.RecordEvent();
+            if (goal is SimpleGoal || goal.IsComplete())
             {
-                _score += _goals[index] is ChecklistGoal ? ((ChecklistGoal)_goals[index]).GetStringRepresentation() : 0;
+                _score += goal.Points;
             }
         }
     }
 
-    public void SaveGoals()
+    public void ListGoalDetails()
     {
-        using (StreamWriter outputFile = new StreamWriter("goals.txt"))
+        for (int i = 0; i < _goals.Count; i++)
         {
-            outputFile.WriteLine(_score);
-            foreach (var goal in _goals)
+            Goal goal = _goals[i];
+            Console.WriteLine($"{i}. {goal.GetDetailsString()}");
+        }
+        Console.WriteLine($"Total Score: {_score}");
+    }
+
+    public void SaveGoals(string filename)
+    {
+        using (StreamWriter outputFile = new StreamWriter(filename))
+        {
+            foreach (Goal goal in _goals)
             {
                 outputFile.WriteLine(goal.GetStringRepresentation());
             }
+            outputFile.WriteLine($"Score:{_score}");
         }
     }
 
-    public void LoadGoals()
+    public void LoadGoals(string filename)
     {
-        if (File.Exists("goals.txt"))
+        _goals.Clear();
+        string[] lines = File.ReadAllLines(filename);
+        foreach (string line in lines)
         {
-            string[] lines = File.ReadAllLines("goals.txt");
-            _score = int.Parse(lines[0]);
+            string[] parts = line.Split(":");
+            string type = parts[0];
 
-            for (int i = 1; i < lines.Length; i++)
+            if (type == "Score")
             {
-                string[] parts = lines[i].Split(":");
-                string goalType = parts[0];
-                string[] goalData = parts[1].Split(",");
-
-                if (goalType == "SimpleGoal")
+                _score = int.Parse(parts[1]);
+            }
+            else
+            {
+                string[] data = parts[1].Split(",");
+                Goal goal = null;
+                switch (type)
                 {
-                    _goals.Add(new SimpleGoal(goalData[0], goalData[1], int.Parse(goalData[2])));
+                    case "SimpleGoal":
+                        goal = new SimpleGoal(data[0], data[1], int.Parse(data[2]));
+                        break;
+                    case "EternalGoal":
+                        goal = new EternalGoal(data[0], data[1], int.Parse(data[2]));
+                        break;
+                    case "ChecklistGoal":
+                        goal = new ChecklistGoal(data[0], data[1], int.Parse(data[2]), int.Parse(data[3]), int.Parse(data[4]));
+                        break;
                 }
-                else if (goalType == "EternalGoal")
-                {
-                    _goals.Add(new EternalGoal(goalData[0], goalData[1], int.Parse(goalData[2])));
-                }
-                else if (goalType == "ChecklistGoal")
-                {
-                    _goals.Add(new ChecklistGoal(goalData[0], goalData[1], int.Parse(goalData[2]), int.Parse(goalData[3]), int.Parse(goalData[4])));
-                }
+                _goals.Add(goal);
             }
         }
     }

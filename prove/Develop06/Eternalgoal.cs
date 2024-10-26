@@ -1,24 +1,23 @@
-public class EternalGoal : Goal
+// EternalGoal.cs
+using System;
+
+class EternalGoal : Goal
 {
-    public EternalGoal(string name, string description, int points) : base(name, description, points) { }
+    public EternalGoal(string name, string description, int points) 
+        : base(name, description, points) {}
 
     public override void RecordEvent()
     {
-        // No completion for eternal goals, just recording points every time it's done
+        Console.WriteLine($"You earned {Points} points for '{Name}'!");
     }
 
     public override bool IsComplete()
     {
-        return false; // Eternal goals are never complete
-    }
-
-    public override string GetDetailsString()
-    {
-        return $"Eternal Goal: {_shortName}, Description: {_description}, Points: {_points}";
+        return false; // Never complete
     }
 
     public override string GetStringRepresentation()
     {
-        return $"EternalGoal:{_shortName},{_description},{_points}";
+        return $"EternalGoal:{Name},{Description},{Points}";
     }
 }
